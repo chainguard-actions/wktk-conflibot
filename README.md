@@ -1,14 +1,36 @@
-# wktk/conflibot
+# conflibot
 
 Check and warn if a Pull Request will conflict with another Pull Request when they get merged.
 
-Hardened by [Chainguard](https://www.chainguard.dev) from the upstream action at [https://github.com/wktk/conflibot](https://github.com/wktk/conflibot).
+## Configuration
 
-## Versions
+```yaml
+name: conflibot
+on: pull_request_target
 
-| Version | Tag | Upstream commit |
-|---------|-----|-----------------|
-| v1.1.2-pre2 | [`v1.1.2-pre2`](https://github.com/chainguard-actions/wktk-conflibot/tree/v1.1.2-pre2) | [`c5cd1b6`](https://github.com/wktk/conflibot/commit/c5cd1b6a42d7bdf40ae0f70fc9790427492e7763) |
+jobs:
+  conflibot:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Warn potential conflicts
+        uses: wktk/conflibot@v1
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          exclude: |
+            yarn.lock
+            **/*.bin
+```
+
+### Inputs
+
+- `github-token` *required*: GitHub API token with write access to the repo
+- `exclude`: Ignored path patterns in **newline-separated** glob format
+
+## Screenshots
+
+![](./misc/checks.png)
+![](./misc/details.png)
 
 ## Privacy
 
