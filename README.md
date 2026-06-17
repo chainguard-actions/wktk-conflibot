@@ -1,6 +1,6 @@
 # wktk/conflibot
 
-Check and warn if a Pull Request will conflict with another Pull Request when they get merged.
+Warn in advance when merging a pull request will cause conflicts in other open pull requests.
 
 Hardened by [Chainguard](https://www.chainguard.dev) from the upstream action at [https://github.com/wktk/conflibot](https://github.com/wktk/conflibot).
 
