@@ -8,6 +8,7 @@ Hardened by [Chainguard](https://www.chainguard.dev) from the upstream action at
 
 | Version | Tag | Upstream commit |
 |---------|-----|-----------------|
+| v1.1.2-pre1 | [`v1.1.2-pre1`](https://github.com/chainguard-actions/wktk-conflibot/tree/v1.1.2-pre1) | [`98a6e0a`](https://github.com/wktk/conflibot/commit/98a6e0a6a2c92bd427a80ee91b3402844aba706e) |
 | v1.1.2-pre2 | [`v1.1.2-pre2`](https://github.com/chainguard-actions/wktk-conflibot/tree/v1.1.2-pre2) | [`c5cd1b6`](https://github.com/wktk/conflibot/commit/c5cd1b6a42d7bdf40ae0f70fc9790427492e7763) |
 | v1.2.0 | [`v1.2.0`](https://github.com/chainguard-actions/wktk-conflibot/tree/v1.2.0) | [`4881912`](https://github.com/wktk/conflibot/commit/4881912dc3fe459059127d667251d5b324622299) |
 | v1.2.1 | [`v1.2.1`](https://github.com/chainguard-actions/wktk-conflibot/tree/v1.2.1) | [`59e255c`](https://github.com/wktk/conflibot/commit/59e255c49c920fd6b67471ab9ef3bf194439a3f2) |
