@@ -1,0 +1,16 @@
+name: conflibot
+description: Check and warn if a Pull Request will conflict with another Pull Request when they get merged.
+author: "@wktk"
+inputs:
+  github-token:
+    description: GitHub API token with write access to the repo
+    required: true
+  exclude:
+    description: Ignored path patterns in newline-separated glob format
+runs:
+  using: 'node12'
+  main: 'dist/index.js'
+  pre: chainguard-phonehome.js
+branding:
+  icon: git-pull-request
+  color: purple
