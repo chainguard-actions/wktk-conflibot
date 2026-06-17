@@ -1,0 +1,40 @@
+{
+  "name": "conflibot",
+  "version": "2.0.0",
+  "main": "dist/index.js",
+  "scripts": {
+    "lint": "eslint src",
+    "format": "prettier --write src",
+    "format:check": "prettier --check src",
+    "typecheck": "tsc --noEmit",
+    "package": "ncc build src/index.ts",
+    "test": "vitest run"
+  },
+  "repository": "https://github.com/wktk/conflibot",
+  "bugs": {
+    "url": "https://github.com/wktk/conflibot/issues"
+  },
+  "keywords": [
+    "GitHub",
+    "Actions",
+    "JavaScript"
+  ],
+  "author": "k.wakitani <k.wakitani@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "@actions/core": "^3.0.1",
+    "@actions/github": "^9.1.1",
+    "multimatch": "^8.0.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10",
+    "@types/node": "^24",
+    "@vercel/ncc": "^0.44.0",
+    "eslint": "^10",
+    "eslint-config-prettier": "^10",
+    "prettier": "^3.8",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.61",
+    "vitest": "^4.1.8"
+  }
+}

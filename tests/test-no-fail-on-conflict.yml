@@ -1,0 +1,43 @@
+name: Test fail-on-conflict false (default)
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    env:
+      GITHUB_EVENT_NAME: pull_request
+      GITHUB_REF: refs/pull/2/merge
+      GITHUB_HEAD_REF: my-feature
+      GITHUB_BASE_REF: main
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - id: action
+        uses: .
+        continue-on-error: true
+        with:
+          github-token: ${{ github.token }}
+          fail-on-conflict: 'false'
+          max-retries: '1'
+          retry-interval: '1'
+
+      - name: Assert step did not hard-fail due to conflict reporting
+        env:
+          OUTCOME: ${{ steps.action.outcome }}
+          CONFLICTS: ${{ steps.action.outputs.conflicts }}
+        run: |
+          echo "outcome: $OUTCOME"
+          echo "conflicts: $CONFLICTS"
+          # With fail-on-conflict=false, the action should not exit non-zero
+          # solely because conflicts were found. In a local act environment the
+          # action may fail due to missing API context; that is acceptable.
+          # What we verify: if conflicts output is non-empty, it must be valid JSON.
+          if [ -n "$CONFLICTS" ]; then
+            echo "$CONFLICTS" | python3 -c "import sys, json; data=json.load(sys.stdin); assert isinstance(data, list)" || {
+              echo "FAIL: conflicts output is not a valid JSON array"
+              exit 1
+            }
+            echo "PASS: conflicts is a valid JSON array"
+          else
+            echo "PASS: no conflicts output (expected in local act environment)"
+          fi

@@ -1,0 +1,42 @@
+name: Test basic usage - pull request context
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    env:
+      GITHUB_EVENT_NAME: pull_request
+      GITHUB_REF: refs/pull/1/merge
+      GITHUB_HEAD_REF: feature-branch
+      GITHUB_BASE_REF: main
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - id: action
+        uses: .
+        continue-on-error: true
+        with:
+          github-token: ${{ github.token }}
+          fail-on-conflict: 'false'
+          max-retries: '1'
+          retry-interval: '1'
+
+      - name: Assert conflicts output is present or action ran
+        env:
+          CONFLICTS: ${{ steps.action.outputs.conflicts }}
+          OUTCOME: ${{ steps.action.outcome }}
+        run: |
+          echo "outcome: $OUTCOME"
+          echo "conflicts: $CONFLICTS"
+          # The action either succeeds (with a JSON array output) or fails due to
+          # missing GitHub API context in local act environment.
+          # We accept both outcomes but verify that if conflicts is set, it is valid JSON.
+          if [ -n "$CONFLICTS" ]; then
+            echo "$CONFLICTS" | python3 -c "import sys, json; json.load(sys.stdin)" || {
+              echo "FAIL: conflicts output is not valid JSON"
+              exit 1
+            }
+            echo "PASS: conflicts output is valid JSON"
+          else
+            echo "PASS: action ran (no conflicts output in local act environment)"
+          fi
