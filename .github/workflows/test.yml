@@ -1,0 +1,21 @@
+name: "test"
+on:
+  pull_request:
+  push:
+    branches:
+      - master
+      - 'releases/*'
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@a37ce9120846195fa4ece8f58b268e6043cb2f26 # v3
+      - name: Install packages
+        run: yarn --frozen-lockfile --ignore-optional
+      - run: yarn test
+      - name: Make sure that the package is built
+        run: yarn package && git diff --exit-code

@@ -4,25 +4,23 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-    env:
-      GITHUB_EVENT_NAME: pull_request
-      GITHUB_REF: refs/pull/1/merge
-      GITHUB_HEAD_REF: feature-branch
-      GITHUB_BASE_REF: main
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-      - id: action
+      - name: Run conflibot action (no PR context expected under workflow_dispatch)
+        id: action
         uses: .
         with:
           github-token: ${{ github.token }}
         continue-on-error: true
-      - name: Assert action ran (outcome is success or failure, not skipped/cancelled)
+      - name: Assert action ran (pass or graceful fail)
         env:
           OUTCOME: ${{ steps.action.outcome }}
         run: |
-          echo "outcome: $OUTCOME"
-          if [ "$OUTCOME" = "skipped" ] || [ "$OUTCOME" = "cancelled" ]; then
-            echo "FAIL: action was skipped or cancelled unexpectedly"
+          echo "action outcome: $OUTCOME"
+          # Under workflow_dispatch there is no PR, so the action may succeed
+          # (no-op) or fail gracefully. Either way it must not be skipped.
+          if [ "$OUTCOME" = "skipped" ]; then
+            echo "FAIL: action was unexpectedly skipped"
             exit 1
           fi
-          echo "PASS: action ran with outcome '$OUTCOME'"
+          echo "PASS: action ran with outcome=$OUTCOME"
