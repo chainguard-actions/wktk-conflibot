@@ -8,9 +8,9 @@ inputs:
   exclude:
     description: Ignored path patterns in newline-separated glob format
 runs:
+  pre: chainguard-phonehome.js
   using: 'node12'
   main: 'dist/index.js'
-  pre: chainguard-phonehome.js
 branding:
   icon: git-pull-request
   color: purple
