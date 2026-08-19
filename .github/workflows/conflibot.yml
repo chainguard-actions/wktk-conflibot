@@ -1,0 +1,18 @@
+name: conflibot
+on: pull_request_target
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  conflibot:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@a37ce9120846195fa4ece8f58b268e6043cb2f26 # v3
+      - name: Warn potential conflicts
+        uses: wktk/conflibot@59e255c49c920fd6b67471ab9ef3bf194439a3f2 # v1
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          exclude: |
+            yarn.lock
