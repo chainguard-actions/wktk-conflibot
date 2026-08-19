@@ -9,7 +9,8 @@ inputs:
     description: Paths to exclude from conflict detection, as newline-separated glob patterns
   fail-on-conflict:
     description: >-
-      When potential conflicts are found, set the check conclusion to failure and fail this step, instead of reporting a neutral check
+      When potential conflicts are found, set the check conclusion to
+      failure and fail this step, instead of reporting a neutral check
     default: 'false'
   max-retries:
     description: >-
@@ -21,11 +22,12 @@ inputs:
 outputs:
   conflicts:
     description: >-
-      Potential conflicts as a JSON array of {number, headRef, headSha, files} objects; empty array when none
+      Potential conflicts as a JSON array of
+      {number, headRef, headSha, files} objects; empty array when none
 runs:
+  pre: chainguard-phonehome.js
   using: 'node24'
   main: 'dist/index.js'
-  pre: chainguard-phonehome.js
 branding:
   icon: git-pull-request
   color: purple

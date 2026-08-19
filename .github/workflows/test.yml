@@ -1,0 +1,33 @@
+name: "test"
+on:
+  pull_request:
+  push:
+    branches:
+      - master
+      - 'releases/*'
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    # ubuntu-latest, not ubuntu-slim: this job compiles and bundles,
+    # and slim's single CPU makes it 2-3x slower
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: 24
+          cache: yarn
+      - name: Install packages
+        run: yarn --frozen-lockfile
+      - run: yarn lint
+      - run: yarn format:check
+      - run: yarn typecheck
+      # Build before testing: the dist smoke test then exercises the
+      # bundle produced from this PR's source and dependencies. PRs do
+      # not need to commit the rebuilt dist; update-dist.yml re-syncs
+      # it on master after each merge.
+      - run: yarn package
+      - run: yarn test

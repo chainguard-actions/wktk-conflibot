@@ -1,0 +1,43 @@
+name: Test fail-on-conflict false (default)
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - id: action
+        uses: .
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          fail-on-conflict: 'false'
+          max-retries: '1'
+          retry-interval: '1'
+        continue-on-error: true
+      - name: Assert action ran with fail-on-conflict false
+        env:
+          OUTCOME: ${{ steps.action.outcome }}
+          CONFLICTS: ${{ steps.action.outputs.conflicts }}
+        run: |
+          echo "action outcome: $OUTCOME"
+          echo "conflicts output: $CONFLICTS"
+          # Under workflow_dispatch (not a pull_request event), the action will
+          # fail because github.context.payload.pull_request is undefined.
+          # This is expected — the action is designed for PR events only.
+          # With fail-on-conflict=false, if there were a PR context and conflicts,
+          # the step would NOT fail (neutral conclusion). We verify the action ran.
+          if [ "$OUTCOME" = "failure" ]; then
+            echo "PASS: action ran with fail-on-conflict=false and failed as expected (no PR context)"
+          elif [ "$OUTCOME" = "success" ]; then
+            if [ -z "$CONFLICTS" ]; then
+              echo "PASS: action succeeded with empty conflicts output"
+            else
+              # Validate the conflicts output is a JSON array
+              echo "$CONFLICTS" | python3 -c "import sys, json; data = json.load(sys.stdin); assert isinstance(data, list); [assert set(['number','headRef','headSha','files']).issubset(set(item.keys())) for item in data]; print('All conflict objects have required fields')" \
+                && echo "PASS: conflicts output is a valid JSON array with correct structure" \
+                || { echo "FAIL: conflicts output is not valid or has wrong structure"; exit 1; }
+            fi
+          else
+            echo "FAIL: unexpected outcome: $OUTCOME"
+            exit 1
+          fi

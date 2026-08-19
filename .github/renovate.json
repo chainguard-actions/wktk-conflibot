@@ -1,0 +1,13 @@
+{
+  "assignees": ["wktk"],
+  "reviewers": ["wktk"],
+  "packageRules": [
+    {
+      "matchUpdateTypes": ["minor", "patch", "pin", "digest"],
+      "automerge": true
+    }
+  ],
+  "extends": [
+    "config:recommended"
+  ]
+}

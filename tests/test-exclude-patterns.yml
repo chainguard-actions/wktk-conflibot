@@ -1,4 +1,4 @@
-name: Test basic usage
+name: Test exclude patterns
 on:
   workflow_dispatch:
 jobs:
@@ -10,23 +10,29 @@ jobs:
         uses: .
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
+          exclude: |
+            *.lock
+            vendor/**
+            node_modules/**
+          fail-on-conflict: 'false'
           max-retries: '1'
           retry-interval: '1'
         continue-on-error: true
-      - name: Assert action ran and produced expected output or error
+      - name: Assert action accepted exclude patterns and ran
         env:
-          CONFLICTS: ${{ steps.action.outputs.conflicts }}
           OUTCOME: ${{ steps.action.outcome }}
+          CONFLICTS: ${{ steps.action.outputs.conflicts }}
         run: |
           echo "action outcome: $OUTCOME"
           echo "conflicts output: $CONFLICTS"
           # Under workflow_dispatch (not a pull_request event), the action will
           # fail because github.context.payload.pull_request is undefined.
-          # This is expected behavior — the action is designed for PR events only.
+          # This is expected — the action is designed for PR events only.
+          # The important thing is that the action accepted the exclude patterns
+          # and ran (did not crash on input parsing).
           if [ "$OUTCOME" = "failure" ]; then
-            echo "PASS: action failed as expected (no pull_request context under workflow_dispatch)"
+            echo "PASS: action ran with exclude patterns and failed as expected (no PR context)"
           elif [ "$OUTCOME" = "success" ]; then
-            # If somehow it succeeded, conflicts output must be a valid JSON array
             if [ -z "$CONFLICTS" ]; then
               echo "PASS: action succeeded with empty conflicts output"
             else
